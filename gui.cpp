@@ -27,6 +27,19 @@ int main (int argc, char *argv[]) {
 
 	ui::Component entInput = ui::Input(&content, "Input Component", input_style);
 
+	int cursPos = 0;
+	entInput |= ui::CatchEvent([&](ui::Event _event){
+		if ((_event == ui::Event::ArrowLeft || _event == ui::Event::Backspace) && cursPos > 0)
+			cursPos--;
+		else if ((_event.is_character() || _event == ui::Event::ArrowRight) && cursPos < content.size())
+			cursPos++;
+
+		if (_event == ui::Event::Character('\n') || _event == ui::Event::ArrowDown || _event == ui::Event::ArrowUp)
+			return true;
+
+		return false;
+	});
+
 	ui::Component entRenderer = ui::Renderer(entInput, [&]{
 		return ui::vbox({
 			ui::text("Portyper init."),
